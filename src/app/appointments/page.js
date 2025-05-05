@@ -21,14 +21,30 @@ dayjs.extend(relativeTime);
 export default async function Appointments({ searchParams }) {
   const session = await auth();
 
-  const { status } = searchParams;
-  console.log("session=>", session);
-  const { appointments, stats } = await getAppointments(
-    session.user.role == "doctor" ? "doctor" : "user",
-    session.user._id,
+  const { status } = searchParams || {};
+  
+  // Return early if no session
+  if (!session || !session?.user) {
+    return (
+      <div className="container mx-auto py-10 text-center">
+        <h1 className="font-bold text-2xl">Please sign in to view appointments</h1>
+        <div className="mt-4">
+          <Button asChild>
+            <a href="/signin">Sign In</a>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  const { appointments = [], stats = { pending: 0, accepted: 0, cancelled: 0 } } = await getAppointments(
+    session?.user?.role === "doctor" ? "doctor" : "user",
+    session?.user?._id,
     status
   );
-  const isDoctor = session.user.role == "doctor";
+
+  const isDoctor = session?.user?.role === "doctor";
+  
   return (
     <div className="container mx-auto">
       <h1 className="font-bold text-2xl mt-10">
@@ -37,34 +53,44 @@ export default async function Appointments({ searchParams }) {
 
       <AppointmentFilterTabs status={status} />
 
-      <div className="flex gap-4">
+      <div className="flex flex-col md:flex-row gap-4 mt-6">
         <div className="shadow flex-grow p-3 rounded border">
-          <h1 className="font font-bold text-2xl">Pending : {stats.pending}</h1>
+          <h1 className="font font-bold text-2xl">Pending : {stats?.pending || 0}</h1>
         </div>
         <div className="shadow flex-grow p-3 rounded border">
           <h1 className="font font-bold text-2xl">
-            Accepted : {stats.accepted}
+            Accepted : {stats?.accepted || 0}
           </h1>
         </div>
         <div className="shadow flex-grow p-3 rounded border">
           <h1 className="font font-bold text-2xl">
-            Cancelled : {stats.cancelled}
+            Cancelled : {stats?.cancelled || 0}
           </h1>
         </div>
       </div>
-      <div className="my-10 grid grid-cols-3 gap-4">
-        {appointments?.map((appointment) =>
-          isDoctor ? (
-            <DoctorAppointmentCard
-              key={appointment._id}
-              appointment={appointment}
-            />
-          ) : (
-            <PatientAppointmentCard
-              key={appointment._id}
-              appointment={appointment}
-            />
+      
+      <div className="my-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {appointments?.length > 0 ? (
+          appointments.map((appointment) =>
+            isDoctor ? (
+              <DoctorAppointmentCard
+                key={appointment?._id}
+                appointment={appointment}
+              />
+            ) : (
+              <PatientAppointmentCard
+                key={appointment?._id}
+                appointment={appointment}
+              />
+            )
           )
+        ) : (
+          <div className="col-span-3 text-center py-10">
+            <h2 className="text-xl font-medium text-gray-500">No appointments found</h2>
+            <p className="mt-2 text-muted-foreground">
+              {status ? `No ${status} appointments available.` : "You don't have any appointments yet."}
+            </p>
+          </div>
         )}
       </div>
     </div>
