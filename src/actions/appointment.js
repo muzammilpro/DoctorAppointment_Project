@@ -33,5 +33,23 @@ export async function updateAppointment(id, status) {
     body: JSON.stringify({ id, status }),
   });
 
+  update = await update.json();
   revalidatePath("/appointments");
+  return update;
+}
+
+export async function rescheduleAppointment(id, date) {
+  try {
+    let update = await fetch(`${process.env.BASE_URL}api/appointment/reschedule`, {
+      method: "PUT",
+      body: JSON.stringify({ id, date }),
+    });
+    
+    update = await update.json();
+    revalidatePath("/appointments");
+    return update;
+  } catch (error) {
+    console.error("Error rescheduling appointment:", error);
+    return { success: false, message: "Failed to reschedule appointment" };
+  }
 }

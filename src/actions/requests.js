@@ -12,14 +12,33 @@ export async function addRequest(data) {
   return add;
 }
 
-export async function getRequest(status) {
-  let requests = await fetch(
-    `${process.env.BASE_URL}api/requests?status=${status ? status : ""}`
-  );
-  requests = requests.json();
+// export async function getRequest(status) {
+//   let requests = await fetch(
+//     `${process.env.BASE_URL}api/requests?status=${status ? status : ""}`
+//   );
+//   requests = requests.json();
 
-  return requests;
+//   return requests;
+// }
+
+export async function getRequest(status) {
+  try {
+    const res = await fetch(
+      `${process.env.BASE_URL}api/requests?status=${status || ""}`
+    );
+
+    if (!res.ok) {
+      throw new Error(`Request failed with status ${res.status}`);
+    }
+
+    const data = await res.json(); // ✅ Await the response
+    return data;
+  } catch (error) {
+    console.error("getRequest error:", error);
+    return { requests: [] }; // ✅ Return safe fallback to avoid frontend crash
+  }
 }
+
 
 export async function getSingleRequest(id) {
   let request = await fetch(`${process.env.BASE_URL}api/requests/${id}`);

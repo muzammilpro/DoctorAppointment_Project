@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Card,
   CardContent,
@@ -7,12 +9,100 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, MapPin } from "lucide-react";
+import { Calendar, Clock, MapPin, CalendarIcon } from "lucide-react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { Button } from "../ui/button";
+import { useState } from "react";
+import { updateAppointment, rescheduleAppointment } from "@/actions/appointment";
+import { useToast } from "@/hooks/use-toast";
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+
 dayjs.extend(relativeTime);
 
-export default function PatientAppointmentCard({ appointment }) {
+export default function PatientAppointmentCard({ appointment, canModify }) {
+  const [loading, setLoading] = useState(false);
+  const [date, setDate] = useState(appointment?.date ? new Date(appointment.date) : new Date());
+  const { toast } = useToast();
+
+  const handleCancelAppointment = async () => {
+    setLoading(true);
+    try {
+      await updateAppointment(appointment?._id, "cancelled");
+      toast({
+        title: "Appointment cancelled",
+        description: "The appointment has been cancelled successfully.",
+      });
+      // Refresh the page to show updated data
+      window.location.reload();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to cancel appointment. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRescheduleAppointment = async () => {
+    if (!date) return;
+    
+    setLoading(true);
+    
+    try {
+      // Call the reschedule endpoint
+      const response = await rescheduleAppointment(appointment?._id, date);
+      
+      if (response.success) {
+        toast({
+          title: "Appointment rescheduled",
+          description: `Appointment rescheduled to ${format(date, "PPP")}`,
+        });
+        
+        // Refresh the page to show updated data
+        window.location.reload();
+      } else {
+        throw new Error(response.msg || "Failed to reschedule");
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to reschedule appointment. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Card key={appointment?._id} className="shadow-lg">
       <CardHeader className="flex flex-row items-center gap-4">
@@ -76,6 +166,91 @@ export default function PatientAppointmentCard({ appointment }) {
           Fees: ${appointment?.request?.fees || "0"}
         </p>
       </CardContent>
+      
+      {canModify && (
+        <CardFooter className="justify-end space-x-2">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button 
+                size="sm" 
+                variant="outline" 
+                className="bg-red-50 hover:bg-red-100 text-red-600"
+              >
+                Cancel
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Cancel Appointment</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to cancel this appointment? This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>No, keep it</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleCancelAppointment}
+                  disabled={loading}
+                >
+                  {loading ? "Cancelling..." : "Yes, cancel it"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button 
+                size="sm" 
+                variant="outline"
+              >
+                Reschedule
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Reschedule Appointment</DialogTitle>
+                <DialogDescription>
+                  Select a new date for your appointment
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !date && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {date ? format(date, "PPP") : <span>Pick a date</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={date}
+                      onSelect={setDate}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <DialogFooter>
+                <Button 
+                  type="submit" 
+                  onClick={handleRescheduleAppointment}
+                  disabled={loading}
+                >
+                  {loading ? "Saving..." : "Save changes"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </CardFooter>
+      )}
     </Card>
   );
 }

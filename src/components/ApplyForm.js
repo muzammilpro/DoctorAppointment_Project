@@ -74,7 +74,7 @@ export default function DoctorForm({ session }) {
       form.reset();
       toast({
         title: "Your application is submitted.",
-        description: "You will be informed by email in 3 business days.",
+        description: "You get response in 3 business days.",
       });
     }
   }
