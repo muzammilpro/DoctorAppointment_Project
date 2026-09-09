@@ -61,7 +61,7 @@ export default function Home() {
       </section>
 
       {/* Additional Features Options */}
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
+      {/* <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
         <div className="border border-rose-600 px-10 py-16 flex flex-col gap-5 text-sm hover:bg-rose-600 hover:text-white transition-all duration-300 text-gray-600 cursor-pointer rounded-lg shadow-lg">
           <FaUserMd className="text-rose-600 text-3xl mb-4" />
           <b>Expert Doctors:</b>
@@ -92,8 +92,99 @@ export default function Home() {
           <b>Support:</b>
           <p>Our dedicated support team is here to assist you 24/7.</p>
         </div>
-      </section>
+      </section> */}
+      <section className="relative mb-20 py-4">
+        <style>{`
+    @keyframes cardReveal {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .feature-card {
+      opacity: 0;
+      animation: cardReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .feature-card:nth-child(1) { animation-delay: 0.05s; }
+    .feature-card:nth-child(2) { animation-delay: 0.15s; }
+    .feature-card:nth-child(3) { animation-delay: 0.25s; }
+    .feature-card:nth-child(4) { animation-delay: 0.35s; }
+    .feature-card:nth-child(5) { animation-delay: 0.45s; }
+    .feature-card:nth-child(6) { animation-delay: 0.55s; }
 
+    .feature-card {
+      background: linear-gradient(180deg, #FFFFFF 0%, #FCF9F8 100%);
+      border: 1px solid #ECE2E1;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                  box-shadow 0.35s ease,
+                  border-color 0.35s ease;
+    }
+    .feature-card:hover {
+      transform: translateY(-6px);
+      border-color: #E4A6AC;
+      box-shadow: 0 20px 40px -12px rgba(190, 30, 60, 0.18);
+    }
+    .feature-icon-badge {
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                  background 0.35s ease;
+    }
+    .feature-card:hover .feature-icon-badge {
+      transform: scale(1.08) rotate(-4deg);
+      background: #BE1E3C;
+    }
+    .feature-card:hover .feature-icon-badge svg {
+      color: #FFFFFF;
+    }
+  `}</style>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="feature-card px-10 py-14 flex flex-col gap-5 rounded-2xl">
+            <div className="feature-icon-badge w-14 h-14 rounded-xl bg-[#FBEAEC] flex items-center justify-center">
+              <FaUserMd className="text-[#BE1E3C] text-2xl transition-colors duration-300" />
+            </div>
+            <b className="text-[#1B1230] text-base">Expert doctors</b>
+            <p className="text-sm text-gray-500 leading-relaxed">Connect with highly qualified and experienced healthcare professionals.</p>
+          </div>
+
+          <div className="feature-card px-10 py-14 flex flex-col gap-5 rounded-2xl">
+            <div className="feature-icon-badge w-14 h-14 rounded-xl bg-[#FBEAEC] flex items-center justify-center">
+              <FaStethoscope className="text-[#BE1E3C] text-2xl transition-colors duration-300" />
+            </div>
+            <b className="text-[#1B1230] text-base">Comprehensive care</b>
+            <p className="text-sm text-gray-500 leading-relaxed">Access a wide range of medical services tailored to your needs.</p>
+          </div>
+
+          <div className="feature-card px-10 py-14 flex flex-col gap-5 rounded-2xl">
+            <div className="feature-icon-badge w-14 h-14 rounded-xl bg-[#FBEAEC] flex items-center justify-center">
+              <FaClipboardList className="text-[#BE1E3C] text-2xl transition-colors duration-300" />
+            </div>
+            <b className="text-[#1B1230] text-base">Health records</b>
+            <p className="text-sm text-gray-500 leading-relaxed">Securely store and manage your health records in one place.</p>
+          </div>
+
+          <div className="feature-card px-10 py-14 flex flex-col gap-5 rounded-2xl">
+            <div className="feature-icon-badge w-14 h-14 rounded-xl bg-[#FBEAEC] flex items-center justify-center">
+              <FaMobileAlt className="text-[#BE1E3C] text-2xl transition-colors duration-300" />
+            </div>
+            <b className="text-[#1B1230] text-base">Mobile access</b>
+            <p className="text-sm text-gray-500 leading-relaxed">Manage your healthcare on the go with our mobile-friendly platform.</p>
+          </div>
+
+          <div className="feature-card px-10 py-14 flex flex-col gap-5 rounded-2xl">
+            <div className="feature-icon-badge w-14 h-14 rounded-xl bg-[#FBEAEC] flex items-center justify-center">
+              <FaShieldAlt className="text-[#BE1E3C] text-2xl transition-colors duration-300" />
+            </div>
+            <b className="text-[#1B1230] text-base">Data security</b>
+            <p className="text-sm text-gray-500 leading-relaxed">Your data is safe with our state-of-the-art security measures.</p>
+          </div>
+
+          <div className="feature-card px-10 py-14 flex flex-col gap-5 rounded-2xl">
+            <div className="feature-icon-badge w-14 h-14 rounded-xl bg-[#FBEAEC] flex items-center justify-center">
+              <FaHandsHelping className="text-[#BE1E3C] text-2xl transition-colors duration-300" />
+            </div>
+            <b className="text-[#1B1230] text-base">Support</b>
+            <p className="text-sm text-gray-500 leading-relaxed">Our dedicated support team is here to assist you 24/7.</p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
