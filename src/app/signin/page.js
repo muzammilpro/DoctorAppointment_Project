@@ -160,7 +160,7 @@ export default async function Signin() {
           </form>
 
           <p className="text-center text-xs text-gray-400 mt-8 leading-relaxed">
-            By continuing, you agree to DocAppoint's Terms of Service and Privacy Policy.
+            By continuing, you agree to DocAppoint&apos;s Terms of Service and Privacy Policy.
           </p>
         </div>
       </div>

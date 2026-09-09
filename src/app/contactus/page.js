@@ -222,7 +222,7 @@ export default function Contact() {
           Contact <span className="text-[#BE1E3C]">us</span>
         </h1>
         <p className="text-gray-500 max-w-lg mx-auto mt-4 text-base">
-          Questions, feedback, or just want to say hello — we'd love to hear from you.
+          Questions, feedback, or just want to say hello — we&apos;d love to hear from you.
         </p>
       </div>
 
@@ -331,7 +331,7 @@ export default function Contact() {
       <div ref={helpRef} className="text-center">
         <div className={`reveal ${helpIn ? 'in' : ''} mb-12`}>
           <h2 className="font-serif text-3xl font-bold text-[#1B1230] mb-4">
-            We're here to <span className="text-[#BE1E3C]">help</span>
+            We&apos;re here to <span className="text-[#BE1E3C]">help</span>
           </h2>
           <p className="text-gray-500 max-w-2xl mx-auto leading-relaxed">
             Whether you have questions about our services, need technical support, or want to share feedback, our team is ready to assist you.
