@@ -23,6 +23,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
+  // Vercel supplies the forwarded host for each deployment. This lets Auth.js
+  // build OAuth callback URLs from that trusted host when no fixed AUTH_URL /
+  // NEXTAUTH_URL is configured in the deployment environment.
+  trustHost: true,
   session: {
     strategy: "jwt",
   },

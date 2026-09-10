@@ -33,4 +33,23 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
+### Google sign-in on Vercel
+
+Do not use `http://localhost:3000` for `NEXTAUTH_URL` (or `AUTH_URL`) in the
+Vercel production environment. Either remove that variable so Auth.js uses the
+Vercel deployment host, or set it to the exact production URL, for example:
+
+```text
+NEXTAUTH_URL=https://your-project.vercel.app
+```
+
+In Google Cloud Console, add the matching authorized redirect URI:
+
+```text
+https://your-project.vercel.app/api/auth/callback/google
+```
+
+Keep `NEXTAUTH_URL=http://localhost:3000` only in `.env.local` for local
+development. After changing Vercel environment variables, redeploy the project.
+
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
