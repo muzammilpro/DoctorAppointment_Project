@@ -11,11 +11,11 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
-import { HomeIcon, PlusIcon, ClockIcon, CheckIcon, XIcon } from "lucide-react";
+import { HomeIcon, PlusIcon, ClockIcon, CheckIcon, XIcon, PencilIcon } from "lucide-react";
 import DoctorDetailSheet from "./DoctorDetailSheet";
 import Link from "next/link";
 
-const DoctorCard = ({ request, isAdmin, onAccept, onReject }) => (
+const DoctorCard = ({ request, isAdmin, onAccept, onReject, onEdit }) => (
   <Card key={request?._id}>
     <CardHeader className="flex flex-row items-center space-x-4">
       <Avatar className="h-10 w-10">
@@ -64,7 +64,11 @@ const DoctorCard = ({ request, isAdmin, onAccept, onReject }) => (
     <CardFooter className="justify-between">
       <DoctorDetailSheet doctor={request} />
       {isAdmin ? (
-        <div>
+        <div className="flex items-center gap-2">
+          <Button size="icon" variant="outline" onClick={onEdit} aria-label="Edit doctor request">
+            <PencilIcon className="h-4 w-4" />
+          </Button>
+          <div>
           {request?.status === "rejected" ? (
             <Button
               size="icon"
@@ -105,6 +109,7 @@ const DoctorCard = ({ request, isAdmin, onAccept, onReject }) => (
               </Button>
             </div>
           )}
+          </div>
         </div>
       ) : (
         <Link href={`/doctors/${request?._id}`}>

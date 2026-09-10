@@ -31,11 +31,11 @@ export async function getRequest(status) {
       throw new Error(`Request failed with status ${res.status}`);
     }
 
-    const data = await res.json(); // ✅ Await the response
+    const data = await res.json(); // âœ… Await the response
     return data;
   } catch (error) {
     console.error("getRequest error:", error);
-    return { requests: [] }; // ✅ Return safe fallback to avoid frontend crash
+    return { requests: [] }; // âœ… Return safe fallback to avoid frontend crash
   }
 }
 
@@ -47,12 +47,14 @@ export async function getSingleRequest(id) {
   return request;
 }
 
-export async function updateRequest(id, status) {
+export async function updateRequest(id, update) {
+  const payload = typeof update === "string" ? { id, status: update } : { id, ...update };
   let requests = await fetch(`${process.env.BASE_URL}api/requests`, {
     method: "PUT",
-    body: JSON.stringify({ id, status }),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
   });
   requests = requests.json();
-  revalidatePath("/admin/requests");
+  revalidatePath("/admin/request");
   return requests;
 }

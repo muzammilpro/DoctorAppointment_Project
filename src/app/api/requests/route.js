@@ -66,35 +66,36 @@ export async function GET(req) {
 export async function PUT(req) {
   await connectDB();
   try {
-    const obj = await req.json();
-    let { id, status } = obj;
-    const request = await RequestModal.findOne({ _id: id });
+    const { id, status, ...updates } = await req.json();
+    const editableFields = ["bio", "hospital", "fees", "gender", "appointmentTime", "degree", "specialization", "experience", "number", "address", "documentBase64", "documentName"];
+    const safeUpdates = Object.fromEntries(
+      Object.entries(updates).filter(([key]) => editableFields.includes(key))
+    );
+    const request = await RequestModal.findById(id);
 
-    await UserModal.findOneAndUpdate({ _id: request.user }, { role: "doctor" });
-    const updated = await RequestModal.findOneAndUpdate(
-      {
-        _id: id,
-      },
-      { status: status }
-    ).exec();
+    if (!request) {
+      return Response.json({ error: true, msg: "Doctor request was not found" }, { status: 404 });
+    }
+
+    if (status) safeUpdates.status = status;
+    if (status === "accepted") {
+      await UserModal.findByIdAndUpdate(request.user, { role: "doctor" });
+    }
+
+    const updated = await RequestModal.findByIdAndUpdate(id, safeUpdates, {
+      new: true,
+      runValidators: true,
+    });
 
     return Response.json(
-      {
-        error: false,
-        msg: "Requests updated Successfully",
-        request: updated,
-      },
+      { error: false, msg: "Request updated successfully", request: updated },
       { status: 200 }
     );
   } catch (err) {
     return Response.json(
-      {
-        error: false,
-        msg: "Something went wrong",
-      },
+      { error: true, msg: "Something went wrong" },
       { status: 500 }
     );
   }
 }
-
 export async function DELETE(req) {}
